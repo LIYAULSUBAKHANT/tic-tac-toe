@@ -1,7 +1,7 @@
 const boxes = document.querySelectorAll(".box");
 const instruction = document.querySelector(".instruction");
 const restartButton = document.getElementById("restart");
-let currentPlayer = "X";
+let currentPlayer = null; 
 let board = Array(9).fill(null);
 const winningCombinations = [
     [0, 1, 2],
@@ -24,12 +24,9 @@ function checkWinner() {
 }
 function handleBoxClick(e) {
     const index = Array.from(boxes).indexOf(e.target);
-
     if (board[index] || checkWinner()) return;
-
     board[index] = currentPlayer;
     e.target.textContent = currentPlayer;
-
     const winner = checkWinner();
     if (winner) {
         instruction.textContent = `Player ${winner} wins!`;
@@ -43,12 +40,26 @@ function handleBoxClick(e) {
 }
 function restartGame() {
     board.fill(null);
-    currentPlayer = "X";
-    instruction.textContent = "Let's start";
+    currentPlayer = null; 
+    instruction.textContent = "Select X or O to start!";
     boxes.forEach(box => {
         box.textContent = "";
         box.style.pointerEvents = "auto";
     });
+    selectPlayer(); 
+}
+function selectPlayer() {
+    setTimeout(() => {
+        const choice = prompt("Select your symbol: X or O").toUpperCase();
+        if (choice === "X" || choice === "O") {
+            currentPlayer = choice;
+            instruction.textContent = `Player ${currentPlayer} starts.`;
+        } else {
+            instruction.textContent = "Invalid choice. Please select again.";
+            selectPlayer();
+        }
+    }, 100); 
 }
 boxes.forEach(box => box.addEventListener("click", handleBoxClick));
 restartButton.addEventListener("click", restartGame);
+selectPlayer();
